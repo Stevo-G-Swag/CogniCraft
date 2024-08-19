@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import Login from './components/Login';
@@ -11,9 +11,16 @@ const PrivateRoute = ({ children }) => {
 };
 
 function App() {
+  const { user } = useAuth();
+
+  useEffect(() => {
+    console.log('App component rendered. Current route:', window.location.pathname);
+    console.log('User state:', user);
+  }, [user]);
+
   return (
-    <AuthProvider>
-      <Router>
+    <Router>
+      <AuthProvider>
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
@@ -25,10 +32,15 @@ function App() {
               </PrivateRoute>
             }
           />
-          <Route path="/" element={<Navigate to="/dashboard" />} />
+          <Route
+            path="/"
+            element={
+              user ? <Navigate to="/dashboard" /> : <Navigate to="/register" />
+            }
+          />
         </Routes>
-      </Router>
-    </AuthProvider>
+      </AuthProvider>
+    </Router>
   );
 }
 

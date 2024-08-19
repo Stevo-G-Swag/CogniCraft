@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -7,11 +7,7 @@ const Dashboard = () => {
   const [newProject, setNewProject] = useState({ name: '', description: '' });
   const { user } = useAuth();
 
-  useEffect(() => {
-    fetchProjects();
-  }, []);
-
-  const fetchProjects = async () => {
+  const fetchProjects = useCallback(async () => {
     try {
       const response = await axios.get('/api/projects', {
         headers: { Authorization: `Bearer ${user.token}` },
@@ -21,7 +17,11 @@ const Dashboard = () => {
     } catch (error) {
       console.error('Error fetching projects:', error.message, error.stack);
     }
-  };
+  }, [user.token]);
+
+  useEffect(() => {
+    fetchProjects();
+  }, [fetchProjects]);
 
   const handleCreateProject = async (e) => {
     e.preventDefault();

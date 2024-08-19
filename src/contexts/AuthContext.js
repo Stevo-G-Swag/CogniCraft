@@ -10,6 +10,7 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const token = localStorage.getItem('token');
+    console.log('AuthContext initialized. User token:', token);
     if (token) {
       setUser({ token });
     }
@@ -20,7 +21,7 @@ export const AuthProvider = ({ children }) => {
       const response = await axios.post('/api/auth/login', { email, password });
       localStorage.setItem('token', response.data.token);
       setUser({ token: response.data.token });
-      console.log('User logged in successfully');
+      console.log('Login successful. Navigating to dashboard.');
       navigate('/dashboard');
     } catch (error) {
       console.error('Login error:', error.response.data.error);
@@ -30,7 +31,7 @@ export const AuthProvider = ({ children }) => {
   const register = async (username, email, password) => {
     try {
       await axios.post('/api/auth/register', { username, email, password });
-      console.log('User registered successfully');
+      console.log('Registration successful. Navigating to login page.');
       navigate('/login');
     } catch (error) {
       console.error('Registration error:', error.response.data.error);
